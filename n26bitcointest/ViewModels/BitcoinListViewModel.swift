@@ -8,12 +8,12 @@ class BitcoinListViewModel: ObservableObject {
     @Published var error: String?
 
     private var cancellables = Set<AnyCancellable>()
+    private var timerCancellable: AnyCancellable?
     private let service: BitcoinServiceProtocol
 
     init(service: BitcoinServiceProtocol = BitcoinService()) {
         self.service = service
         fetchRates()
-        startAutoUpdate()
     }
 
     func fetchRates() {
@@ -45,9 +45,19 @@ class BitcoinListViewModel: ObservableObject {
     }
 
     func startAutoUpdate() {
-        Timer.publish(every: 60, on: .main, in: .common)
-            .autoconnect()
-            .sink { _ in self.fetchRates() }
-            .store(in: &cancellables)
+        if (timerCancellable != nil) {
+            stopAutoUpdate()
+        }
+        
+        timerCancellable = Timer.publish(every: 60, on: .main, in: .common)
+             .autoconnect()
+             .sink { [weak self] _ in
+                 self?.fetchRates()
+             }
+    }
+    
+    func stopAutoUpdate() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
     }
 }
