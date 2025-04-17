@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct BitcoinListView: View {
@@ -15,7 +14,7 @@ struct BitcoinListView: View {
                         List(viewModel.rates) { rate in
                             NavigationLink(value: rate.date) {
                                 HStack {
-                                    Text(rate.date.formatted(date: .abbreviated, time: .omitted))
+                                    Text(DateFormatter.utc.string(from: rate.date))
                                     Spacer()
                                     Text("€\(Int(rate.eur))")
                                 }
@@ -37,5 +36,5 @@ struct BitcoinListView: View {
             .onAppear {
                 viewModel.startAutoUpdate()
             }
-        }
+    }
 }

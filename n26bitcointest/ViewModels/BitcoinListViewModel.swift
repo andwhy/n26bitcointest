@@ -21,14 +21,17 @@ class BitcoinListViewModel: ObservableObject {
         service.fetchHistoricalRates()
             // Filter: One rate per day (latest for each date)
             .map { rawRates in
-                let grouped = Dictionary(grouping: rawRates) { rate in
-                    Calendar.current.startOfDay(for: rate.date)
+                let grouped = Dictionary(grouping: rawRates) { $0.date.utcStartOfDay() }
+
+                let averaged = grouped.compactMap { (date, group) -> BitcoinRate? in
+                    guard !group.isEmpty else { return nil }
+                    let avg = group.map(\.eur).reduce(0, +) / Double(group.count)
+                    return BitcoinRate(date: date, eur: avg)
                 }
-                let filtered = grouped.compactMap { (_, group) -> BitcoinRate? in
-                    return group.last // get the latest entry for each day
-                }
-                return filtered
-                    .sorted { $0.date > $1.date } // descending by date
+
+                return averaged
+                    .sorted { $0.date > $1.date }
+                    .prefix(14)
             }
             .map { Array($0) } // convert prefix result to Array
             .receive(on: DispatchQueue.main)

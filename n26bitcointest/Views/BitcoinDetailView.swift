@@ -7,7 +7,7 @@ struct BitcoinDetailView: View {
     var body: some View {
         VStack(spacing: 16) {
             if let detail = viewModel.detail {
-                Text("Date: \(date.formatted(date: .abbreviated, time: .omitted))")
+                Text("Date: \(Text(DateFormatter.utc.string(from: date)))")
                 Text("EUR: €\(Int(detail.eur))")
                 Text("USD: $\(Int(detail.usd))")
                 Text("GBP: £\(Int(detail.gbp))")

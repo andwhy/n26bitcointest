@@ -21,9 +21,9 @@ class BitcoinService: BitcoinServiceProtocol {
     }()
 
     func fetchHistoricalRates() -> AnyPublisher<[BitcoinRate], Error> {
-        let url = URL(string: "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=eur&days=13")!
+        let url = URL(string: "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=eur&days=14")!
         let request = URLRequest(url: url)
-
+        
         return URLSession.shared
             .publisherWithAPICheck(for: request, decodeTo: MarketChartResponse.self, decoder: decoder)
             .map { response in
@@ -31,8 +31,9 @@ class BitcoinService: BitcoinServiceProtocol {
                     guard pair.count == 2 else { return nil }
                     let timestamp = pair[0]
                     let value = pair[1]
-                    let date = Date(timeIntervalSince1970: timestamp / 1000)
-                    return BitcoinRate(date: date, eur: value)
+                    let rawDate = Date(timeIntervalSince1970: timestamp / 1000)
+
+                    return BitcoinRate(date: rawDate, eur: value)
                 }
             }
             .eraseToAnyPublisher()
