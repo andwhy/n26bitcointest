@@ -19,7 +19,6 @@ class BitcoinListViewModel: ObservableObject {
         isLoading = true
 
         service.fetchHistoricalRates()
-            // Filter: One rate per day (latest for each date)
             .map { rawRates in
                 let grouped = Dictionary(grouping: rawRates) { $0.date.utcStartOfDay() }
 
