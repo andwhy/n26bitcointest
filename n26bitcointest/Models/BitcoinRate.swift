@@ -1,6 +1,6 @@
 import Foundation
 
-struct BitcoinRate: Identifiable, Codable {
+struct BitcoinRate: Identifiable, Codable, Equatable {
     let id = UUID()
     let date: Date
     let eur: Double

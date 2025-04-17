@@ -1,3 +1,4 @@
+import Foundation
 
 /// Structure to decode API-level error from CoinGecko (e.g., 429 Too Many Requests)
 struct APIErrorResponse: Codable {
